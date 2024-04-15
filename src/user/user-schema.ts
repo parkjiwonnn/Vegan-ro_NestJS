@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { Document, Types } from "mongoose";
-
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 // 새로운 우리만의 타입 -User 스키마 문서 타입 /
-export type UserDocument = UserScema & Document;
+export type UserDocument = UserSchema & Document;
 
 @Schema({
   collection: 'User',
@@ -11,40 +11,43 @@ export type UserDocument = UserScema & Document;
   updatedAt: 'updated_at',},
   versionKey: false,
 })
-export class UserScema {
-    @Prop({required: false,})
-    email:string;
+export class UserSchema {
+    @Prop({required: true,})
+    email: string;
 
-    @Prop()
+    @Prop({default: null,})
     password: string;
 
-    @Prop()
+    @Prop({default: null,})
     name: string;
 
-    @Prop()
+    @Prop({default: null,})
     nickname: string;
 
-    @Prop()
+    @Prop({default: null,})
     phone: string;
 
-    @Prop()
+    @Prop({default: null,})
     tag: string;
 
     @Prop({
       type: Types.ObjectId,
       ref: 'Image',
+      default: null,
     })
     tag_img: Types.ObjectId //|ImageDocument;
 
-    @Prop()
+    @Prop({required: true, default: null,})
     complaint: number;
 
-    @Prop()
-    is_admin:boolean;
+    @Prop({default: false,})
+    is_admin: boolean;
 
-    @Prop()
-    deleted_at:Date;
+    @Prop({default: null,})
+    deleted_at: Date;
   }
 
-const Schema = SchemaFactory.createForClass(UserScema);
-Schema.plugin(mongoosePaginate)
+const schema = SchemaFactory.createForClass(UserSchema);
+schema.plugin(mongoosePaginate);
+
+export const userSchema = schema;
