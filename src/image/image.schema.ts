@@ -6,7 +6,6 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 export type ImageDocument = ImageSchema & Document;
 
 @Schema({
-  collection: 'Image',
   timestamps:{createdAt: 'created_at',updatedAt: 'updated_at',},
   versionKey: false,
 })
