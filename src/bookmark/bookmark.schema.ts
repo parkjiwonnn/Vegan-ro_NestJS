@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { Document, Types } from "mongoose";
-import mongoosePaginate from 'mongoose-paginate-v2';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 import { PlaceDocument } from "src/place/place.schema";
 import { UserDocument } from "src/user/user.schema";
 
