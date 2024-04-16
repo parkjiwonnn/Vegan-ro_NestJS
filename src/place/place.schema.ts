@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import { ImageDocument } from 'src/image/image.schema';
 
 export type PlaceDocument = PlaceSchema & Document;
 
@@ -27,7 +28,7 @@ export class PlaceSchema {
     ref: 'Image',
     required: true,
   })
-  category_img: Types.ObjectId;
+  category_img: Types.ObjectId | ImageDocument;
 
   @Prop({
     required: true,

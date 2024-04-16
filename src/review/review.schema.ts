@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import { PlaceDocument } from 'src/place/place.schema';
+import { UserDocument } from 'src/user/user.schema';
 
 export type ReviewDocument = ReviewSchema & Document;
 
@@ -17,7 +19,7 @@ export class ReviewSchema {
     ref: 'Place',
     required: true,
   })
-  place_id: Types.ObjectId;
+  place_id: Types.ObjectId | PlaceDocument;
 
   @Prop({
     required: true,
@@ -29,7 +31,7 @@ export class ReviewSchema {
     ref: 'User',
     required: true,
   })
-  user_id: Types.ObjectId;
+  user_id: Types.ObjectId | UserDocument;
 }
 
 const schema = SchemaFactory.createForClass(ReviewSchema);
