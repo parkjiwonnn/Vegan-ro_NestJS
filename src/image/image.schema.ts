@@ -13,11 +13,14 @@ export class ImageSchema {
     @Prop({ required: true, unique: true, })
     name: string;
 
-    @Prop({ required: true, type: Object,})
-    url: {
-      basic_url: string;
-      pin_url?: string; // 필수가 아닌 URL이므로 선택적으로 지정
-    };
+    @Prop({ required: true,
+      type: {
+        basic_url: { type: String, required: true },
+        pin_url: { type: String },
+        _id: false 
+      },
+    })
+    url: { basic_url: string; pin_url?: string };
   }
 
 
