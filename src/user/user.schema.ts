@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { Document, Types } from "mongoose";
-import mongoosePaginate from 'mongoose-paginate-v2';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 import { ImageDocument } from "src/image/image.schema";
 
 // 새로운 우리만의 타입 -User 스키마 문서 타입 /
