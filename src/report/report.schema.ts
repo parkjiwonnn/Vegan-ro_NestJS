@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import * as mongoosePaginate from 'mongoose-paginate-v2';
+import { ImageDocument } from 'src/image/image.schema';
+import { UserDocument } from 'src/user/user.schema';
 
 export type ReportedPlaceDocument = ReportedPlaceSchema & Document;
 
@@ -27,7 +29,7 @@ export class ReportedPlaceSchema {
     ref: 'Image',
     required: true,
   })
-  category_img: Types.ObjectId;
+  category_img: Types.ObjectId | ImageDocument;
 
   @Prop({
     required: true,
@@ -85,7 +87,7 @@ export class ReportedPlaceSchema {
     ref: 'User',
     required: true,
   })
-  user_id: Types.ObjectId;
+  user_id: Types.ObjectId | UserDocument;
 }
 
 const schema = SchemaFactory.createForClass(ReportedPlaceSchema);

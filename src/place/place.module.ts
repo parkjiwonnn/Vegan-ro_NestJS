@@ -3,12 +3,13 @@ import { PlaceService } from './place.service';
 import { PlaceController } from './place.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { placeSchema } from './place.schema';
+import { PlaceRepository } from './place.repository';
 
 @Module({
-  imports:  [
-    MongooseModule.forFeature([{ name: 'Place', schema: placeSchema }])
+  imports: [
+    MongooseModule.forFeature([{ name: 'Place', schema: placeSchema }]),
   ],
-  controllers: [PlaceController],
+  controllers: [PlaceController, PlaceRepository],
   providers: [PlaceService],
 })
 export class PlaceModule {}
