@@ -4,7 +4,6 @@ import { ImageRepository } from "./image.repository";
 import { ImageService } from "./image.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { imageSchema } from "./image.schema";
-import { ResponseFormatService } from "src/errors/response.format";
 
 
 @Module({
@@ -13,7 +12,7 @@ import { ResponseFormatService } from "src/errors/response.format";
       ]),
     ],
     controllers: [ImageController],
-    providers: [ImageService, ImageRepository,ResponseFormatService],
+    providers: [ImageService, ImageRepository],
     exports: [ImageRepository], 
     
 })

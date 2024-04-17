@@ -1,27 +1,26 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
 import { ImageService } from "./image.service";
-import { ResponseFormatService } from "../errors/response.format";
 import { CreateImageDto } from "./dto/create.image.dto";
 import { UpdateImageDto } from "./dto/update.image.dto";
+import { ResponseFormat } from "src/errors/response.format";
 
 @Controller('admin')
 export class ImageController {constructor(
     private readonly imageService: ImageService,
-    private readonly responseFormatService: ResponseFormatService,
 ) {}
 
 // 이미지 추가
 @Post()
 async postImage(@Body() CreateImageDto:CreateImageDto) {
   const newImage = await this.imageService.createImage(CreateImageDto);
-  return this.responseFormatService.buildResponse(newImage);
+  return ResponseFormat.buildResponse(newImage);
 }
 
 // 이미지 수정
 @Put('images/:imageId')
 async putImage(@Param('imageId') imageId: string, @Body() updateImageDto: UpdateImageDto) {
   const updatedImage = await this.imageService.updateImage(imageId, updateImageDto);
-  return this.responseFormatService.buildResponse(updatedImage);
+  return ResponseFormat.buildResponse(updatedImage);
 }
 
 
@@ -29,7 +28,7 @@ async putImage(@Param('imageId') imageId: string, @Body() updateImageDto: Update
 @Delete('images/:imageId')
 async deleteImage(@Param('imageId') imageId: string) {
   const deletedImage = await this.imageService.deleteImage(imageId);
-  return this.responseFormatService.buildResponse(deletedImage);
+  return ResponseFormat.buildResponse(deletedImage);
 }
 
 // 이미지 전체 조회(이름 쿼리)
@@ -41,13 +40,13 @@ async getImages(@Query('name') name?: string) {
   } else {
     images = await this.imageService.getImages();
   }
-  return this.responseFormatService.buildResponse(images);
+  return ResponseFormat.buildResponse(images);
 }
 
 // 이미지 id로 조회
 @Get('images/:imageId')
 async getImageById(@Param('imageId') imageId: string) {
   const imageInfo = await this.imageService.getImageById(imageId);
-  return this.responseFormatService.buildResponse(imageInfo);
+  return ResponseFormat.buildResponse(imageInfo);
 }
 }
