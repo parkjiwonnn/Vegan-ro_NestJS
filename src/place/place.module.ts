@@ -9,7 +9,7 @@ import { PlaceRepository } from './place.repository';
   imports: [
     MongooseModule.forFeature([{ name: 'Place', schema: placeSchema }]),
   ],
-  controllers: [PlaceController, PlaceRepository],
-  providers: [PlaceService],
+  controllers: [PlaceController],
+  providers: [PlaceService, PlaceRepository],
 })
 export class PlaceModule {}
