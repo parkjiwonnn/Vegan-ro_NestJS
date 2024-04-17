@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -9,9 +9,13 @@ import { ReportedPlaceModule } from './report/report.module';
 import { ReviewModule } from './review/review.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-
+import { JwtModule } from '@nestjs/jwt';
+@Global()
 @Module({
   imports: [
+    JwtModule.register({
+      secret: 'yourSecretHere', // 실제 사용시 안전한 곳에 보관한 시크릿 키를 사용해야 합니다.
+      signOptions: { expiresIn: '24h' },}),
     ConfigModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -33,5 +37,6 @@ import { MongooseModule } from '@nestjs/mongoose';
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [JwtModule],
 })
 export class AppModule {}
