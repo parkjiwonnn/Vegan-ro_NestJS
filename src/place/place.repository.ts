@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PlaceDocument } from './place.schema';
+import { CreatePlaceDto } from './dto/create.place.dto';
 
 @Injectable()
 export class PlaceRepository {
@@ -9,19 +10,17 @@ export class PlaceRepository {
     @InjectModel('Place') private readonly placeModel: Model<PlaceDocument>,
   ) {}
   // 새로운 장소 추가
-  async createPlace({
-    name,
-    category,
-    categoryImg,
-    veganOption,
-    tel,
-    address,
-    addressLotNumber,
-    addressDetail,
-    location,
-    openTimes,
-    snsUrl,
-  }) {
+  async createPlace({ category, categoryImg, location, restOfData }) {
+    const {
+      name,
+      veganOption,
+      tel,
+      address,
+      addressLotNumber,
+      addressDetail,
+      openTimes,
+      snsUrl,
+    } = restOfData;
     const newPlace = new this.placeModel({
       name,
       category,
