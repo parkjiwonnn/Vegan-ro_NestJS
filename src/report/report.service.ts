@@ -13,17 +13,17 @@ export class ReportedPlaceService {
   // 새로운 장소 등록
   async createReportedPlace(
     createReportedPlaceDto: CreateReportedPlaceDto,
-    userId: string,
+    user_id: string,
   ) {
     const { category, ...restOfData } = createReportedPlaceDto;
     // category_img 이미지 컬렉션에서 가져오기
-    const categoryImg = await this.imageRepository.getImageByName(category);
+    const category_img = await this.imageRepository.getImageByName(category);
     const newReportedPlace =
       await this.reportedPlaceRepository.createReportedPlace({
+        user_id,
         category,
-        categoryImg,
+        category_img,
         ...restOfData,
-        userId,
       });
     if (newReportedPlace === null) {
       throw new BadRequestException('제보 장소 등록에 실패하였습니다.');
@@ -43,49 +43,27 @@ export class ReportedPlaceService {
   async getReportedPlaces(
     pageNumber: number,
     pageSize: number,
-    userId?: string,
+    user_id?: string,
   ) {
     const reportedPlaces =
       await this.reportedPlaceRepository.findReportedPlaces(
         pageNumber,
         pageSize,
-        userId,
+        user_id,
       );
     return reportedPlaces;
   }
   // 특정 id를 가진 장소 내용 수정
-  async updateReportedPlace(
-    id: string,
-    {
-      name,
-      category,
-      veganOption,
-      tel,
-      address,
-      addressLotNumber,
-      addressDetail,
-      location,
-      openTimes,
-      snsUrl,
-      userId,
-    },
-  ) {
+  async updateReportedPlace(id: string, { updateReportedPlaceDto, user_id }) {
+    const { category, ...restOfData } = updateReportedPlaceDto;
     // category_img 이미지 컬렉션에서 가져오기
-    const categoryImg = await this.imageRepository.getImageByName(category);
+    const category_img = await this.imageRepository.getImageByName(category);
     const updatedReportedPlace =
       await this.reportedPlaceRepository.updateReportedPlace(id, {
-        name,
         category,
-        categoryImg,
-        veganOption,
-        tel,
-        address,
-        addressLotNumber,
-        addressDetail,
-        location,
-        openTimes,
-        snsUrl,
-        userId,
+        category_img,
+        ...restOfData,
+        user_id,
       });
     if (updatedReportedPlace === null) {
       throw new BadRequestException('해당 id를 갖는 제보가 없습니다.');

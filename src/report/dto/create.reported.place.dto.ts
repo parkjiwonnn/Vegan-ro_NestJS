@@ -1,12 +1,12 @@
 export class CreateReportedPlaceDto {
   name: string;
   category: string;
-  veganOption: boolean;
+  vegan_option: boolean;
   tel: string;
   address: string;
-  addressLotNumber: string;
-  addressDetail: string;
+  address_lot_number: string;
+  address_detail: string;
   location: number[];
-  openTimes: string[];
-  snsUrl: string;
+  open_times: string[];
+  sns_url: string;
 }

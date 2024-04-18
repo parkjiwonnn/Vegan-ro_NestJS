@@ -12,32 +12,16 @@ export class ReportedPlaceRepository {
 
   // 새로운 장소 제보
   async createReportedPlace({
-    name,
+    user_id,
     category,
-    categoryImg,
-    veganOption,
-    tel,
-    address,
-    addressLotNumber,
-    addressDetail,
-    location,
-    openTimes,
-    snsUrl,
-    userId,
+    category_img,
+    ...restOfData
   }) {
     const newReportedPlace = new this.ReportedPlaceModel({
-      name,
+      user_id,
       category,
-      category_img: categoryImg,
-      vegan_option: veganOption,
-      tel,
-      address,
-      address_lot_number: addressLotNumber,
-      address_detail: addressDetail,
-      location,
-      open_times: openTimes,
-      sns_url: snsUrl,
-      user_id: userId,
+      category_img,
+      ...restOfData,
     });
     await newReportedPlace.save();
     return newReportedPlace.toObject();
@@ -52,12 +36,12 @@ export class ReportedPlaceRepository {
   async findReportedPlaces(
     pageNumber: number,
     pageSize: number,
-    userId: string,
+    user_id: string,
   ) {
     let query: any = {};
 
-    if (userId) {
-      query.user_id = userId;
+    if (user_id) {
+      query.user_id = user_id;
     }
 
     let reportedPlaces: any;
@@ -82,37 +66,16 @@ export class ReportedPlaceRepository {
   // 특정 id를 가진 제보 장소 내용 덮어씌우기
   async updateReportedPlace(
     id: string,
-    {
-      name,
-      category,
-      categoryImg,
-      veganOption,
-      tel,
-      address,
-      addressLotNumber,
-      addressDetail,
-      location,
-      openTimes,
-      snsUrl,
-      userId,
-    },
+    { user_id, category, categoryImg, ...restOfData },
   ) {
     const updatedReportedPlace =
       await this.ReportedPlaceModel.findByIdAndUpdate(
         id,
         {
-          name,
           category,
-          category_img: categoryImg,
-          vegan_option: veganOption,
-          tel,
-          address,
-          address_lot_number: addressLotNumber,
-          address_detail: addressDetail,
-          location,
-          open_times: openTimes,
-          sns_url: snsUrl,
-          user_id: userId,
+          categoryImg,
+          ...restOfData,
+          user_id,
         },
         { new: true },
       )
