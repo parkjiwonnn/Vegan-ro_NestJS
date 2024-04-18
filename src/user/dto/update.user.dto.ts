@@ -9,7 +9,7 @@ export class UpdateUserDto {
   @IsOptional()
   tag?: string;
 
-  @IsUrl()
+  @IsString()
   @IsOptional()
-  tagImg?: string; // tagImg 속성 추가
+  tag_img?: string; // tagImg 속성 추가
 }

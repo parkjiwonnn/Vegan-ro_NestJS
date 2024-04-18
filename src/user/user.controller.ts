@@ -1,5 +1,5 @@
 // user.controller.ts
-import { Controller, Post, Body, Get, Patch, Param, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, Param, UseGuards, Req, Delete, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { ResponseFormat } from 'src/errors/response.format';
@@ -57,10 +57,35 @@ async getUserInfo(@Req() req) {
     const patchedUserComplaint = await this.userService.incrementComplaintByReviewId(reviewId);
     return ResponseFormat.buildResponse(patchedUserComplaint);
   }
+
+  // 회원 탈퇴
+  @Patch('/users/me/withdrawal')
+  @UseGuards(JwtAuthGuard)
+  async patchUserInfo(@Req() req) {
+      const email = req.user.email;
+      const user = await this.userService.patchUserInfo(email);
+      return ResponseFormat.buildResponse(user);
+    } 
+
+// 관리자 모든 회원 정보 조회
+  @Get('/admin/users')
+  @UseGuards(JwtAuthGuard)
+  async getUsers(@Req() req) {
+      const users = await this.userService.getUsers();
+      return ResponseFormat.buildResponse(users);
+  }
+//관리자 회원 삭제
+  @Delete('/admin/users/:userId')
+  @UseGuards(JwtAuthGuard)
+  async deleteUser(@Param('userId') userId: string) {
+      const user = await this.userService.deleteUser(userId);
+      return ResponseFormat.buildResponse(user);
+    }
   
   //로그아웃
   @Get('logout')
-  async logout(req, res) {
+  @UseGuards(JwtAuthGuard)
+  async logout(@Req() req, @Res() res) {
     try {
       // 토큰 유효성 확인 후 클라이언트에게 응답
       res.status(200).json({ message: '토큰이 유효합니다. 로그아웃 되었습니다.' });
