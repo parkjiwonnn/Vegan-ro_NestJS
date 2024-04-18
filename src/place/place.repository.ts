@@ -10,33 +10,22 @@ export class PlaceRepository {
     @InjectModel('Place') private readonly placeModel: Model<PlaceDocument>,
   ) {}
   // 새로운 장소 추가
-  async createPlace({ category, categoryImg, location, restOfData }) {
-    const {
-      name,
-      veganOption,
-      tel,
-      address,
-      addressLotNumber,
-      addressDetail,
-      openTimes,
-      snsUrl,
-    } = restOfData;
+  async createPlace({
+    category,
+    category_img,
+    location: newLocation,
+    ...restOfData
+  }) {
     const newPlace = new this.placeModel({
-      name,
       category,
-      category_img: categoryImg,
-      vegan_option: veganOption,
-      tel,
-      address,
-      address_lot_number: addressLotNumber,
-      address_detail: addressDetail,
-      location,
-      open_times: openTimes,
-      sns_url: snsUrl,
+      category_img,
+      location: newLocation,
+      ...restOfData,
     });
     await newPlace.save();
     return newPlace.toObject();
   }
+
   // id로 장소 찾기
   async findPlaceById(id: String) {
     // deleted_at이 null인 데이터만 가져오기
@@ -45,11 +34,12 @@ export class PlaceRepository {
       .populate('category_img')
       .lean();
   }
+
   // 장소이름 또는 주소에 검색어를 포함하는 장소 모두 찾기
   async findPlacesByKeyword(
-    query: string,
-    pageNumber: number,
-    pageSize: number,
+    query?: string,
+    pageNumber?: number,
+    pageSize?: number,
   ) {
     return await this.placeModel
       .find({
@@ -70,14 +60,15 @@ export class PlaceRepository {
       .limit(pageSize)
       .lean();
   }
+
   // 조건을 만족하는 장소 모두 찾기
   async findPlaces(
-    center: string,
-    radius: number,
-    pageNumber: number,
-    pageSize: number,
-    category: string,
-    veganOption: boolean,
+    center?: string,
+    radius?: number,
+    pageNumber?: number,
+    pageSize?: number,
+    category?: string,
+    veganOption?: boolean,
   ) {
     let query: any = { deleted_at: null }; // deleted_at이 null인 데이터만 포함
 
@@ -111,38 +102,16 @@ export class PlaceRepository {
       .exec();
     return places;
   }
+
   // 특정 id를 가진 장소 내용 덮어씌우기
-  async updatePlace(
-    id: string,
-    {
-      name,
-      category,
-      categoryImg,
-      veganOption,
-      tel,
-      address,
-      addressLotNumber,
-      addressDetail,
-      location,
-      openTimes,
-      snsUrl,
-    },
-  ) {
+  async updatePlace(id: string, { category, category_img, ...restOfData }) {
     const updatedPlace = await this.placeModel
       .findByIdAndUpdate(
         id,
         {
-          name,
           category,
-          category_img: categoryImg,
-          vegan_option: veganOption,
-          tel,
-          address,
-          address_lot_number: addressLotNumber,
-          address_detail: addressDetail,
-          location,
-          open_times: openTimes,
-          sns_url: snsUrl,
+          category_img,
+          ...restOfData,
         },
         { new: true },
       )
@@ -150,6 +119,7 @@ export class PlaceRepository {
       .lean();
     return updatedPlace;
   }
+
   // 특정 id를 가진 장소 삭제
   async deletePlace(id: string) {
     const deletedPlace = await this.placeModel
@@ -158,6 +128,7 @@ export class PlaceRepository {
       .lean();
     return deletedPlace;
   }
+
   // 특정 id를 가진 장소 삭제 표시
   async updateDeletedAt(id: string) {
     const updatedPlace = await this.placeModel.findByIdAndUpdate(

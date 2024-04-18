@@ -14,7 +14,7 @@ export class PlaceService {
   async createPlace(createPlaceDto: CreatePlaceDto) {
     const { category, location, ...restOfData } = createPlaceDto;
     // category_img 이미지 컬렉션에서 가져오기
-    const categoryImg = await this.imageRepository.getImageByName(category);
+    const category_img = await this.imageRepository.getImageByName(category);
     // location GeoJSON 객체로 저장
     const newLocation = {
       type: 'Point',
@@ -22,15 +22,16 @@ export class PlaceService {
     };
     const newPlace = await this.placeRepository.createPlace({
       category,
-      categoryImg,
+      category_img,
       location: newLocation,
-      restOfData,
+      ...restOfData,
     });
     if (newPlace === null) {
       throw new BadRequestException('장소 등록에 실패하였습니다.');
     }
     return { message: '정상적으로 등록되었습니다.', newPlace };
   }
+
   // 특정 id를 가진 장소 가져오기
   async getPlace(placeId: string) {
     const place = await this.placeRepository.findPlaceById(placeId);
@@ -39,11 +40,12 @@ export class PlaceService {
     }
     return place;
   }
+
   // 검색어를 만족하는 장소 모두 가져오기
   async getPlacesByKeyword(
-    query: string,
-    pageNumber: number,
-    pageSize: number,
+    query?: string,
+    pageNumber?: number,
+    pageSize?: number,
   ) {
     const places = await this.placeRepository.findPlacesByKeyword(
       query,
@@ -54,12 +56,12 @@ export class PlaceService {
   }
   // 조건을 만족하는 장소 모두 가져오기
   async getPlaces(
-    center: string,
-    radius: number,
-    pageNumber: number,
-    pageSize: number,
-    category: string,
-    veganOption: boolean,
+    center?: string,
+    radius?: number,
+    pageNumber?: number,
+    pageSize?: number,
+    category?: string,
+    veganOption?: boolean,
   ) {
     if ((center && !radius) || (!center && radius)) {
       throw new BadRequestException(
@@ -86,24 +88,24 @@ export class PlaceService {
     }
     const { category, ...restOfData } = updatePlaceDto;
     // category_img 이미지 컬렉션에서 가져오기
-    const categoryImg = await this.imageRepository.getImageByName(category);
+    const category_img = await this.imageRepository.getImageByName(category);
     const updatedPlace = await this.placeRepository.updatePlace(id, {
       category,
-      categoryImg,
+      category_img,
       ...restOfData,
     });
     return { message: '정상적으로 수정되었습니다.', updatedPlace };
   }
+
   // 특정 id를 가진 장소 삭제
   async deletePlace(id: string) {
-    // id가 deleted_at이 null이고, 존재하는 id인지 확인
-    const existingPlace = await this.placeRepository.findPlaceById(id);
-    if (!existingPlace) {
+    const deletedPlace = await this.placeRepository.deletePlace(id);
+    if (!deletedPlace) {
       throw new BadRequestException('해당 id를 갖는 장소가 없습니다.');
     }
-    const deletedPlace = await this.placeRepository.deletePlace(id);
     return { message: '정상적으로 삭제되었습니다.', deletedPlace };
   }
+
   // 특정 id를 가진 장소 삭제 날짜 표시
   async updateDeletedAt(id: string) {
     const updatedPlace = await this.placeRepository.updateDeletedAt(id);

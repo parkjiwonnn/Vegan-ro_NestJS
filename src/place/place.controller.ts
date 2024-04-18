@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   Put,
@@ -18,14 +19,16 @@ export class PlaceController {
 
   // 새로운 장소 등록 POST
   @Post('/admin/places')
-  async postPlace(@Body() createPlaceDto: CreatePlaceDto): Promise<any> {
+  async postPlace(
+    @Body() createPlaceDto: CreatePlaceDto,
+  ): Promise<ResponseFormat> {
     const newPlace = await this.placeService.createPlace(createPlaceDto);
     return ResponseFormat.buildResponse(newPlace);
   }
 
   // 특정 장소 GET
   @Get('/places/:placeId')
-  async getPlace(@Query('placeId') placeId: string): Promise<any> {
+  async getPlace(@Param('placeId') placeId: string): Promise<ResponseFormat> {
     const place = await this.placeService.getPlace(placeId);
     return ResponseFormat.buildResponse(place);
   }
@@ -33,14 +36,14 @@ export class PlaceController {
   // 장소 필터링 GET
   @Get('/places')
   async getPlaces(
-    @Query('center') center: string,
-    @Query('radius') radius: number,
-    @Query('pageNumber') pageNumber: number,
-    @Query('pageSize') pageSize: number,
-    @Query('category') category: string,
-    @Query('veganOption') veganOption: boolean,
-    @Query('search') search: string,
-  ) {
+    @Query('center') center?: string,
+    @Query('radius') radius?: number,
+    @Query('pageNumber') pageNumber?: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('category') category?: string,
+    @Query('veganOption') veganOption?: boolean,
+    @Query('search') search?: string,
+  ): Promise<ResponseFormat> {
     let query: any = {};
     if (search) {
       query.search = search;
@@ -65,12 +68,15 @@ export class PlaceController {
     return ResponseFormat.buildResponse(places);
   }
 
+  // 장소 전체 조회 GET
+  // @Get('/admin/places')
+
   // 장소 수정 PUT
   @Put('/admin/places/:placeId')
   async putPlace(
-    @Query('placeId') placeId: string,
+    @Param('placeId') placeId: string,
     @Body() updatePlaceDto: CreatePlaceDto,
-  ) {
+  ): Promise<ResponseFormat> {
     const updatedPlace = await this.placeService.updatePlace(
       placeId,
       updatePlaceDto,
@@ -80,14 +86,18 @@ export class PlaceController {
 
   // 장소 삭제 DELETE
   @Delete('/admin/places/:placeId')
-  async deletePlace(@Query('placeId') placeId: string) {
+  async deletePlace(
+    @Param('placeId') placeId: string,
+  ): Promise<ResponseFormat> {
     const deletedplace = await this.placeService.deletePlace(placeId);
     return ResponseFormat.buildResponse(deletedplace);
   }
 
   // 장소 삭제 여부 PATCH
   @Patch('/admin/places/:placeId')
-  async patchDeletedAt(@Query('placeId') placeId: string) {
+  async patchDeletedAt(
+    @Param('placeId') placeId: string,
+  ): Promise<ResponseFormat> {
     const updatedPlace = await this.placeService.updateDeletedAt(placeId);
     return ResponseFormat.buildResponse(updatedPlace);
   }

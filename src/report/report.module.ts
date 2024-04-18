@@ -5,15 +5,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { reportedPlaceSchema } from './report.schema';
 import { ReportedPlaceRepository } from './report.repository';
 import { ImageModule } from 'src/image/image.module';
-import { ImageRepository } from 'src/image/image.repository';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: 'Report', schema: reportedPlaceSchema },
+      { name: 'ReportedPlace', schema: reportedPlaceSchema },
     ]),
+    ImageModule,
   ],
   controllers: [ReportedPlaceController],
-  providers: [ReportedPlaceService, ReportedPlaceRepository, ImageRepository],
+  providers: [ReportedPlaceService, ReportedPlaceRepository],
 })
 export class ReportedPlaceModule {}
