@@ -36,7 +36,7 @@ export class UserSchema {
     })
     tag_img: Types.ObjectId |ImageDocument;
 
-    @Prop({required: true, default: null,})
+    @Prop({default: null,})
     complaint: number;
 
     @Prop({default: false,})
