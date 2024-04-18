@@ -11,7 +11,7 @@ export type UserDocument = UserSchema & Document;
   versionKey: false,
 })
 export class UserSchema {
-    @Prop({required: true,})
+    @Prop({required: true})
     email: string;
 
     @Prop({default: null,})
@@ -20,7 +20,7 @@ export class UserSchema {
     @Prop({default: null,})
     name: string;
 
-    @Prop({default: null, unique: true,})
+    @Prop({default: null })
     nickname: string;
 
     @Prop({default: null,})
@@ -36,7 +36,7 @@ export class UserSchema {
     })
     tag_img: Types.ObjectId |ImageDocument;
 
-    @Prop({default: null,})
+    @Prop({required: true, default: 0,})
     complaint: number;
 
     @Prop({default: false,})

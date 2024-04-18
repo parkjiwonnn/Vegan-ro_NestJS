@@ -65,7 +65,6 @@ export class UserService {
   }
 
   async generateTokenFromKakaoUserInfo(kakaoUserInfo: any): Promise<string> {
-    try {
       const kakaoEmail = kakaoUserInfo.kakao_account.email;
 
         if (!kakaoEmail) {
@@ -102,15 +101,12 @@ export class UserService {
         );
         console.log('Generated token:', token);
         return token;
-    } catch (error) {
-        console.error('카카오 사용자 정보에서 토큰 생성 중 오류 발생:', error);
-        throw new BadRequestException('카카오 사용자 정보에서 토큰 생성 중 오류 발생');
-    }
-}
+    } 
+
 
 
   async signUp(email: string, plainPassword: string): Promise<any> {
-    try {
+
       const existingUser = await this.userRepository.findByEmail(email);
       if (existingUser) {
         throw new BadRequestException('중복된 이메일입니다.');
@@ -121,14 +117,11 @@ export class UserService {
         password: hashedPassword,
       });
       return { message: '회원가입이 성공적으로 완료되었습니다.', newUser };
-    } catch (error) {
-      console.error('Error signing up:', error);
-      throw new BadRequestException('회원가입 중 오류가 발생했습니다.');
     }
-  }
+  
 
   async signIn(email: string, plainPassword: string): Promise<string> {
-    try {
+
       const user = await this.userRepository.findByEmail(email);
       if (!user) {
         throw new NotFoundException('사용자를 찾을 수 없습니다.');
@@ -146,13 +139,9 @@ export class UserService {
         expiresIn: '6h',
       });
       return token;
-    } catch (error) {
-      console.error('Error signing in:', error);
-      throw new BadRequestException('로그인 중 오류가 발생했습니다.');
     }
-  }
 
-  
+  //회원 정보 수정
   async updateUserInfo(email: string, updateUserDto: UpdateUserDto): Promise<any> {
     const user = await this.userRepository.findByEmail(email);
   
@@ -160,31 +149,24 @@ export class UserService {
       throw new NotFoundException('해당 회원이 존재하지 않습니다');
     }
   
-    // updateUserDto에서 tag 값을 추출
-    const { tag } = updateUserDto;
+    let updateObject = { ...updateUserDto };
   
-    // tag 값에 해당하는 이미지를 가져온다
-    let tagImg = null;
-    if (tag) {
-      const tagImage = await this.imageRepository.getImageByName(tag);
-      if (tagImage) {
-        tagImg = tagImage.url; // 가정: getImageByName 메소드가 이미지 객체를 반환하고, 이 객체에는 이미지 URL이 포함되어 있다
-      }
+    if (updateUserDto.tag) {
+        // 태그에 해당하는 이미지를 검색합니다.
+        const tagImg = await this.imageRepository.getImageByName(updateUserDto.tag);
+      
+        // 이미지가 존재하면 해당 이미지의 _id로 업데이트 오브젝트를 설정합니다.
+        // 이미지가 없으면 tag_img를 null로 설정합니다.
+        updateObject = { ...updateObject, tag_img: tagImg ? tagImg._id : null }; // tagImg에서 tag_img로 수정
     }
   
-    // 사용자 정보를 업데이트하기 위해 updateUserDto를 사용하되, tagImg도 함께 업데이트한다
-    // 이 단계에서는 updateByEmail 메소드의 구현 또는 사용자 모델이 tagImg를 처리할 수 있어야 한다
-    const updatedUserInfo = await this.userRepository.updateByEmail(email, {
-      ...updateUserDto,
-      tagImg, // 태그 이미지 정보도 업데이트
-    });
+    const updatedUserInfo = await this.userRepository.updateByEmail(email, updateObject);
   
     return {
       message: '회원정보 수정이 성공적으로 완료되었습니다.',
       updatedUserInfo,
     };
-  }
-  
+}
   async getUserInfo(email: string): Promise<any> {
     const userInfo = await this.userRepository.findByEmail(email);
     const { password, ...userInfoWithoutSensitive } = userInfo;

@@ -35,12 +35,12 @@ export class UserRepository {
   }
 
   async updateByEmail(email: string, updateUserDto: UpdateUserDto): Promise<UserDocument | null> {
-    return await this.userModel.findOneAndUpdate({ email }, updateUserDto, { new: true }).populate('tagImg').lean().exec();
+    return await this.userModel.findOneAndUpdate({ email }, updateUserDto,{ new: true }).populate('tag_img').lean().exec();
   }
 
   async patchByEmail(email: string): Promise<UserDocument | null> {
     const currentDate = new Date();
-    return await this.userModel.findOneAndUpdate({ email }, { $set: { deletedAt: currentDate } }, { new: true, lean: true }).exec();
+    return await this.userModel.findOneAndUpdate({ email }, { $set: { deleted_at: currentDate } }, { new: true, lean: true }).exec();
   }
 
   async getUserIdByReviewId(reviewId: string): Promise<string | null> {
