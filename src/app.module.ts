@@ -10,23 +10,27 @@ import { ReviewModule } from './review/review.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+
 @Global()
 @Module({
   imports: [
-    JwtModule.register({
-      secret: 'yourSecretHere', // 실제 사용시 안전한 곳에 보관한 시크릿 키를 사용해야 합니다.
-      signOptions: { expiresIn: '24h' },}),
+    // JwtModule을 비동기로 등록합니다.
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '24h' },
+      }),
+    }),
     ConfigModule.forRoot(),
+    // MongooseModule을 비동기로 등록합니다.
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        const uri = configService.get<string>('MONGO_URI');
-        console.log('📍 Connected to MongoDB');
-        return {
-          uri,
-        };
-      },
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+      }),
     }),
     UserModule,
     BookmarkModule,

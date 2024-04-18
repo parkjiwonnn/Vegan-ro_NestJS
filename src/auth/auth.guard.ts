@@ -21,6 +21,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = decoded; // 요청에 사용자 정보 추가
       return true; // 인증 성공
     } catch (error) {
+      console.log(error);
       throw new UnauthorizedException('토큰 인증에 실패했습니다.'); // 토큰이 유효하지 않은 경우 예외 발생
     }
   }
