@@ -5,10 +5,8 @@ import {
   IsNotEmpty,
   IsOptional,
   Matches,
-  Length,
-  IsNumber,
-  Min,
-  Max,
+  ArrayMinSize,
+  ArrayMaxSize,
 } from 'class-validator';
 
 export class CreatePlaceDto {
@@ -47,10 +45,9 @@ export class CreatePlaceDto {
   address_detail: string = '';
 
   @IsArray()
-  @Length(2, 2)
-  @IsNumber({}, { each: true })
-  @Min(-180, { each: true })
-  @Max(180, { each: true })
+  @ArrayMinSize(2)
+  @ArrayMaxSize(2)
+  @IsNotEmpty()
   location: number[];
 
   @IsArray()

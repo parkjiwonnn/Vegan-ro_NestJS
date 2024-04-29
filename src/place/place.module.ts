@@ -13,5 +13,6 @@ import { ImageModule } from 'src/image/image.module';
   ],
   controllers: [PlaceController],
   providers: [PlaceService, PlaceRepository],
+  exports: [PlaceRepository],
 })
 export class PlaceModule {}
