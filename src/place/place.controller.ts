@@ -11,7 +11,8 @@ import {
 } from '@nestjs/common';
 import { PlaceService } from './place.service';
 import { CreatePlaceDto } from './dto/create.place.dto';
-import { ResponseFormat } from 'src/errors/response.format';
+import { ResponseFormat } from 'src/global/response.format';
+import { PlaceFilterDto } from './dto/place.filter.dto';
 
 @Controller()
 export class PlaceController {
@@ -19,61 +20,71 @@ export class PlaceController {
 
   // 새로운 장소 등록 POST
   @Post('/admin/places')
-  async postPlace(
+  async createPlace(
     @Body() createPlaceDto: CreatePlaceDto,
   ): Promise<ResponseFormat> {
     const newPlace = await this.placeService.createPlace(createPlaceDto);
-    return ResponseFormat.buildResponse(newPlace);
+    return new ResponseFormat(newPlace);
   }
 
   // 특정 장소 GET
   @Get('/places/:placeId')
   async getPlace(@Param('placeId') placeId: string): Promise<ResponseFormat> {
     const place = await this.placeService.getPlace(placeId);
-    return ResponseFormat.buildResponse(place);
+    return new ResponseFormat(place);
   }
 
-  // 장소 필터링 GET
-  @Get('/places')
-  async getPlaces(
-    @Query('center') center?: string,
-    @Query('radius') radius?: number,
-    @Query('pageNumber') pageNumber?: number,
-    @Query('pageSize') pageSize?: number,
-    @Query('category') category?: string,
-    @Query('veganOption') veganOption?: boolean,
-    @Query('search') search?: string,
-  ): Promise<ResponseFormat> {
+  // getPlaces 공통 함수
+  async getPlaces({
+    pageNumber,
+    pageSize,
+    search,
+    ...restOfData
+  }: PlaceFilterDto) {
     let query: any = {};
     if (search) {
       query.search = search;
     }
     let places: any;
     if (Object.keys(query).length === 0) {
+      const { center, radius, category, veganOption } = restOfData;
       places = await this.placeService.getPlaces(
-        center,
-        radius,
         pageNumber,
         pageSize,
+        center,
+        radius,
         category,
         veganOption,
       );
     } else {
       places = await this.placeService.getPlacesByKeyword(
-        query.search,
         pageNumber,
         pageSize,
+        query.search,
       );
     }
-    return ResponseFormat.buildResponse(places);
+    return new ResponseFormat(places);
+  }
+
+  // 장소 필터링 GET
+  @Get('/places')
+  async getPlacesWithFilter(
+    @Query() filterDto: PlaceFilterDto,
+  ): Promise<ResponseFormat> {
+    return await this.getPlaces(filterDto);
   }
 
   // 장소 전체 조회 GET
-  // @Get('/admin/places')
+  @Get('/admin/places')
+  async getPlacesUseAdmin(
+    @Query() filterDto: PlaceFilterDto,
+  ): Promise<ResponseFormat> {
+    return await this.getPlaces(filterDto);
+  }
 
   // 장소 수정 PUT
   @Put('/admin/places/:placeId')
-  async putPlace(
+  async updatePlace(
     @Param('placeId') placeId: string,
     @Body() updatePlaceDto: CreatePlaceDto,
   ): Promise<ResponseFormat> {
@@ -81,7 +92,7 @@ export class PlaceController {
       placeId,
       updatePlaceDto,
     );
-    return ResponseFormat.buildResponse(updatedPlace);
+    return new ResponseFormat(updatedPlace);
   }
 
   // 장소 삭제 DELETE
@@ -90,15 +101,15 @@ export class PlaceController {
     @Param('placeId') placeId: string,
   ): Promise<ResponseFormat> {
     const deletedplace = await this.placeService.deletePlace(placeId);
-    return ResponseFormat.buildResponse(deletedplace);
+    return new ResponseFormat(deletedplace);
   }
 
   // 장소 삭제 여부 PATCH
   @Patch('/admin/places/:placeId')
-  async patchDeletedAt(
+  async updateDeletedAt(
     @Param('placeId') placeId: string,
   ): Promise<ResponseFormat> {
     const updatedPlace = await this.placeService.updateDeletedAt(placeId);
-    return ResponseFormat.buildResponse(updatedPlace);
+    return new ResponseFormat(updatedPlace);
   }
 }
