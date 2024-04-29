@@ -49,7 +49,8 @@ export class ReportedPlaceRepository {
     if (Object.keys(query).length === 0) {
       reportedPlaces = await this.ReportedPlaceModel.find()
         .sort({ createdAt: -1 })
-        .populate(['category_img', 'user_id'])
+        .populate('category_img')
+        .populate({ path: 'user_id', select: '-is_admin -password' })
         .skip((pageNumber - 1) * pageSize)
         .limit(pageSize)
         .exec();
@@ -66,14 +67,14 @@ export class ReportedPlaceRepository {
   // 특정 id를 가진 제보 장소 내용 덮어씌우기
   async updateReportedPlace(
     id: string,
-    { user_id, category, categoryImg, ...restOfData },
+    { user_id, category, category_img, ...restOfData },
   ) {
     const updatedReportedPlace =
       await this.ReportedPlaceModel.findByIdAndUpdate(
         id,
         {
           category,
-          categoryImg,
+          category_img,
           ...restOfData,
           user_id,
         },

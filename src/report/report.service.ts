@@ -30,6 +30,7 @@ export class ReportedPlaceService {
     }
     return { message: '정상적으로 등록되었습니다.', newReportedPlace };
   }
+
   // 특정 id를 가진 장소 가져오기
   async getReportedPlace(id: string) {
     const reportedPlace =
@@ -39,6 +40,7 @@ export class ReportedPlaceService {
     }
     return reportedPlace;
   }
+
   // 조건을 만족하는 장소 모두 가져오기
   async getReportedPlaces(
     pageNumber: number,
@@ -53,6 +55,7 @@ export class ReportedPlaceService {
       );
     return reportedPlaces;
   }
+
   // 특정 id를 가진 장소 내용 수정
   async updateReportedPlace(id: string, { updateReportedPlaceDto, user_id }) {
     const { category, ...restOfData } = updateReportedPlaceDto;
@@ -70,6 +73,7 @@ export class ReportedPlaceService {
     }
     return { message: '정상적으로 수정되었습니다.', updatedReportedPlace };
   }
+
   // 특정 id를 가진 장소 삭제
   async deleteReportedPlace(id: string) {
     const deletedReportedPlace =
