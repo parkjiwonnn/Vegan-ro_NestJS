@@ -43,23 +43,23 @@ export class PlaceService {
 
   // 검색어를 만족하는 장소 모두 가져오기
   async getPlacesByKeyword(
-    query?: string,
     pageNumber?: number,
     pageSize?: number,
+    search?: string,
   ) {
     const places = await this.placeRepository.findPlacesByKeyword(
-      query,
       pageNumber,
       pageSize,
+      search,
     );
     return places;
   }
   // 조건을 만족하는 장소 모두 가져오기
   async getPlaces(
-    center?: string,
-    radius?: number,
     pageNumber?: number,
     pageSize?: number,
+    center?: string,
+    radius?: number,
     category?: string,
     veganOption?: boolean,
   ) {

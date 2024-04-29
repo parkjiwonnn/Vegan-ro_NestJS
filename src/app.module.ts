@@ -10,6 +10,8 @@ import { ReviewModule } from './review/review.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+import { APP_FILTER } from '@nestjs/core';
+import { GlobalExceptionFilter } from './global/exception.filter';
 
 @Global()
 @Module({
@@ -40,7 +42,13 @@ import { JwtModule } from '@nestjs/jwt';
     ReviewModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+  ],
   exports: [JwtModule],
 })
 export class AppModule {}

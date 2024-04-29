@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ReviewModule } from './review.module';
+import { CreateReviewDto } from './dto/create.review.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -11,25 +12,26 @@ export class ReviewRepository {
   ) {}
 
   // 새로운 리뷰 추가
-  async createReview({ placeId, content, userId }) {
+  async createReview(createReviewDto: CreateReviewDto, user_id: string) {
     const newReview = new this.ReviewModel({
-      place_id: placeId,
-      content,
-      user_id: userId,
+      createReviewDto,
+      user_id,
     });
     await newReview.save();
     return newReview.toObject();
   }
+
   // id로 리뷰 찾기
   async findReviewById(id: string) {
     return await this.ReviewModel.findById(id).populate('user_id').lean();
   }
+
   // 조건을 만족하는 리뷰 모두 찾기
   async findReviews(
     pageNumber: number,
     pageSize: number,
-    placeId: string,
     userId: string,
+    placeId: string,
   ) {
     let query: any = {};
 
@@ -47,14 +49,16 @@ export class ReviewRepository {
     if (Object.keys(query).length === 0) {
       reviews = await this.ReviewModel.find()
         .sort({ createdAt: -1 })
-        .populate('user_id')
+        .populate({ path: 'place_id', select: '_id name address' })
+        .populate({ path: 'user_id', select: '_id nickname tag' })
         .skip((pageNumber - 1) * pageSize)
         .limit(pageSize)
         .exec();
     } else {
       reviews = await this.ReviewModel.find(query)
         .sort({ createdAt: -1 })
-        .populate('user_id')
+        .populate({ path: 'place_id', select: '_id name address' })
+        .populate({ path: 'user_id', select: '_id nickname tag' })
         .skip((pageNumber - 1) * pageSize)
         .limit(pageSize)
         .exec();
@@ -78,6 +82,7 @@ export class ReviewRepository {
 
     return { reviews, totalCount };
   }
+
   // 특정 id를 가진 리뷰 내용 덮어씌우기
   async updateReview(id: string, content: string) {
     const updatedReview = await this.ReviewModel.findByIdAndUpdate(
@@ -89,6 +94,7 @@ export class ReviewRepository {
     ).lean();
     return updatedReview;
   }
+
   // 특정 id를 가진 리뷰 삭제
   async deleteReview(id: string) {
     const deletedReview = await this.ReviewModel.findByIdAndDelete(id).lean();

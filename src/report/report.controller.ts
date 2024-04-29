@@ -8,12 +8,10 @@ import {
   Req,
   Put,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { ReportedPlaceService } from './report.service';
-import { ResponseFormat } from 'src/errors/response.format';
+import { ResponseFormat } from 'src/global/response.format';
 import { CreateReportedPlaceDto } from './dto/create.reported.place.dto';
-import { JwtAuthGuard } from 'src/auth/auth.guard';
 
 @Controller()
 export class ReportedPlaceController {
@@ -21,82 +19,81 @@ export class ReportedPlaceController {
 
   // id로 특정 제보 장소 GET
   @Get('/reports/:reportedPlaceId')
-  async getReportedPlace(@Param('reportedPlaceId') reportedPlaceId: string) {
+  async getReportedPlace(
+    @Param('reportedPlaceId') reportedPlaceId: string,
+  ): Promise<ResponseFormat> {
     const reportedPlace =
       await this.reportedPlaceService.getReportedPlace(reportedPlaceId);
-    return ResponseFormat.buildResponse(reportedPlace);
+    return new ResponseFormat(reportedPlace);
   }
 
   // 제보 장소 전체 GET
   @Get('/admin/reports')
-  @UseGuards(JwtAuthGuard)
   async getReportedPlaces(
     @Query('pageNumber') pageNumber: number,
     @Query('pageSize') pageSize: number,
-  ) {
+  ): Promise<ResponseFormat> {
     const reportedPlaces = await this.reportedPlaceService.getReportedPlaces(
       pageNumber,
       pageSize,
     );
-    return ResponseFormat.buildResponse(reportedPlaces);
+    return new ResponseFormat(reportedPlaces);
   }
 
   // 유저의 제보 장소 모두 가져오기 GET
   @Get('/reports/me')
-  @UseGuards(JwtAuthGuard)
   async getReportedPlacesByUser(
+    @Req() req,
     @Query('pageNumber') pageNumber: number,
     @Query('pageSize') pageSize: number,
-    @Req() req,
-  ) {
+  ): Promise<ResponseFormat> {
     const user_id = req.user.userId;
     const reportedPlaces = await this.reportedPlaceService.getReportedPlaces(
       pageNumber,
       pageSize,
       user_id,
     );
-    return ResponseFormat.buildResponse(reportedPlaces);
+    return new ResponseFormat(reportedPlaces);
   }
 
   // 새로운 장소 제보 POST
   @Post('/reports')
-  @UseGuards(JwtAuthGuard)
-  async postReportedPlace(
-    @Body() createReportedPlaceDto: CreateReportedPlaceDto,
+  async createReportedPlace(
     @Req() req,
-  ) {
+    @Body() createReportedPlaceDto: CreateReportedPlaceDto,
+  ): Promise<ResponseFormat> {
     const user_id = req.user.userId;
     const newReportedPlace =
       await this.reportedPlaceService.createReportedPlace(
         createReportedPlaceDto,
         user_id,
       );
-    return ResponseFormat.buildResponse(newReportedPlace);
+    return new ResponseFormat(newReportedPlace);
   }
 
   // 제보 장소 수정 PUT
   @Put('/reports/:reportedPlaceId')
-  @UseGuards(JwtAuthGuard)
-  async putReportedPlace(
+  async updateReportedPlace(
+    @Req() req,
     @Param('reportedPlaceId') reportedPlaceId: string,
     @Body() updateReportedPlaceDto: CreateReportedPlaceDto,
-    @Req() req,
-  ) {
+  ): Promise<ResponseFormat> {
     const user_id = req.user.userId;
     const updatedReportedPlace =
       await this.reportedPlaceService.updateReportedPlace(reportedPlaceId, {
         updateReportedPlaceDto,
         user_id,
       });
-    return ResponseFormat.buildResponse(updatedReportedPlace);
+    return new ResponseFormat(updatedReportedPlace);
   }
 
   // 제보 장소 삭제 DELETE
   @Delete('/reports/:reportedPlaceId')
-  @UseGuards(JwtAuthGuard)
-  async deleteReportedPlace(@Param('reportedPlaceId') reportedPlaceId: string) {
+  async deleteReportedPlace(
+    @Param('reportedPlaceId') reportedPlaceId: string,
+  ): Promise<ResponseFormat> {
     const deletedReportedPlace =
       await this.reportedPlaceService.deleteReportedPlace(reportedPlaceId);
-    return ResponseFormat.buildResponse(deletedReportedPlace);
+    return new ResponseFormat(deletedReportedPlace);
   }
 }
