@@ -4,6 +4,7 @@ import { ImageRepository } from "./image.repository";
 import { ImageService } from "./image.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { imageSchema } from "./image.schema";
+import { RoleGuard } from "src/auth/role.guard";
 
 
 @Module({
@@ -12,7 +13,7 @@ import { imageSchema } from "./image.schema";
       ]),
     ],
     controllers: [ImageController],
-    providers: [ImageService, ImageRepository],
+    providers: [ImageService, ImageRepository,RoleGuard],
     exports: [ImageRepository], 
     
 })
