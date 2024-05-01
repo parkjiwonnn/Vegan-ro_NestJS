@@ -7,6 +7,7 @@ import { userSchema } from "./user.schema";
 import { ImageModule } from "src/image/image.module";
 import { ConfigModule } from "@nestjs/config";
 import { reviewSchema } from "src/review/review.schema";
+import { RoleGuard } from "src/auth/role.guard";
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -16,7 +17,7 @@ import { reviewSchema } from "src/review/review.schema";
         ConfigModule
     ],
     controllers: [UserController],
-    providers: [UserService, UserRepository],
+    providers: [UserService, UserRepository,RoleGuard],
     exports: [UserRepository], 
     
 })

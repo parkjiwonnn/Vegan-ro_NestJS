@@ -4,6 +4,7 @@ import { BookmarkRepository } from "./bookmark.repository";
 import { BookmarkService } from "./bookmark.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { bookmarkSchema } from "./bookmark.schema";
+import { RoleGuard } from "src/auth/role.guard";
 
 @Module({
     imports: [
@@ -12,7 +13,7 @@ import { bookmarkSchema } from "./bookmark.schema";
         ]),
       ],
     controllers: [BookmarkController],
-    providers: [BookmarkService, BookmarkRepository],
+    providers: [BookmarkService, BookmarkRepository, RoleGuard],
     exports: [BookmarkRepository], 
 })
 export class BookmarkModule {}
