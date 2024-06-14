@@ -8,10 +8,14 @@ import {
   Req,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ReportedPlaceService } from './report.service';
 import { ResponseFormat } from 'src/global/response.format';
 import { CreateReportedPlaceDto } from './dto/create.reported.place.dto';
+import { Roles } from 'src/auth/roles.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { RoleGuard } from 'src/auth/role.guard';
 
 @Controller()
 export class ReportedPlaceController {
@@ -19,6 +23,8 @@ export class ReportedPlaceController {
 
   // id로 특정 제보 장소 GET
   @Get('/reports/:reportedPlaceId')
+  @Roles('user')
+  @UseGuards(AuthGuard, RoleGuard)
   async getReportedPlace(
     @Param('reportedPlaceId') reportedPlaceId: string,
   ): Promise<ResponseFormat> {
@@ -29,6 +35,8 @@ export class ReportedPlaceController {
 
   // 제보 장소 전체 GET
   @Get('/admin/reports')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async getReportedPlaces(
     @Query('pageNumber') pageNumber: number,
     @Query('pageSize') pageSize: number,
@@ -42,6 +50,8 @@ export class ReportedPlaceController {
 
   // 유저의 제보 장소 모두 가져오기 GET
   @Get('/reports/me')
+  @Roles('user')
+  @UseGuards(AuthGuard, RoleGuard)
   async getReportedPlacesByUser(
     @Req() req,
     @Query('pageNumber') pageNumber: number,
@@ -58,6 +68,8 @@ export class ReportedPlaceController {
 
   // 새로운 장소 제보 POST
   @Post('/reports')
+  @Roles('user')
+  @UseGuards(AuthGuard, RoleGuard)
   async createReportedPlace(
     @Req() req,
     @Body() createReportedPlaceDto: CreateReportedPlaceDto,
@@ -73,6 +85,8 @@ export class ReportedPlaceController {
 
   // 제보 장소 수정 PUT
   @Put('/reports/:reportedPlaceId')
+  @Roles('user')
+  @UseGuards(AuthGuard, RoleGuard)
   async updateReportedPlace(
     @Req() req,
     @Param('reportedPlaceId') reportedPlaceId: string,
@@ -89,6 +103,8 @@ export class ReportedPlaceController {
 
   // 제보 장소 삭제 DELETE
   @Delete('/reports/:reportedPlaceId')
+  @Roles('user')
+  @UseGuards(AuthGuard, RoleGuard)
   async deleteReportedPlace(
     @Param('reportedPlaceId') reportedPlaceId: string,
   ): Promise<ResponseFormat> {

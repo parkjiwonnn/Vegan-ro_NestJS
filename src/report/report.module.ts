@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { reportedPlaceSchema } from './report.schema';
 import { ReportedPlaceRepository } from './report.repository';
 import { ImageModule } from 'src/image/image.module';
+import { RoleGuard } from 'src/auth/role.guard';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { ImageModule } from 'src/image/image.module';
     ImageModule,
   ],
   controllers: [ReportedPlaceController],
-  providers: [ReportedPlaceService, ReportedPlaceRepository],
+  providers: [ReportedPlaceService, ReportedPlaceRepository, RoleGuard],
 })
 export class ReportedPlaceModule {}
