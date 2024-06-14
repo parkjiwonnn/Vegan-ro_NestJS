@@ -8,11 +8,15 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PlaceService } from './place.service';
 import { CreatePlaceDto } from './dto/create.place.dto';
 import { ResponseFormat } from 'src/global/response.format';
 import { PlaceFilterDto } from './dto/place.filter.dto';
+import { Roles } from 'src/auth/roles.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { RoleGuard } from 'src/auth/role.guard';
 
 @Controller()
 export class PlaceController {
@@ -20,6 +24,8 @@ export class PlaceController {
 
   // 새로운 장소 등록 POST
   @Post('/admin/places')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async createPlace(
     @Body() createPlaceDto: CreatePlaceDto,
   ): Promise<ResponseFormat> {
@@ -76,6 +82,8 @@ export class PlaceController {
 
   // 장소 전체 조회 GET
   @Get('/admin/places')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async getPlacesUseAdmin(
     @Query() filterDto: PlaceFilterDto,
   ): Promise<ResponseFormat> {
@@ -84,6 +92,8 @@ export class PlaceController {
 
   // 장소 수정 PUT
   @Put('/admin/places/:placeId')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async updatePlace(
     @Param('placeId') placeId: string,
     @Body() updatePlaceDto: CreatePlaceDto,
@@ -97,6 +107,8 @@ export class PlaceController {
 
   // 장소 삭제 DELETE
   @Delete('/admin/places/:placeId')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async deletePlace(
     @Param('placeId') placeId: string,
   ): Promise<ResponseFormat> {
@@ -106,6 +118,8 @@ export class PlaceController {
 
   // 장소 삭제 여부 PATCH
   @Patch('/admin/places/:placeId')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async updateDeletedAt(
     @Param('placeId') placeId: string,
   ): Promise<ResponseFormat> {
