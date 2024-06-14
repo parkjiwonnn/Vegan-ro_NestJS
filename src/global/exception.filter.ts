@@ -40,7 +40,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         message:
           exception instanceof HttpException
             ? exception.getResponse()['message']
-            : exception['message'] || 'Internal Server Error',
+            : 'Internal Server Error',
         error:
           exception instanceof HttpException
             ? exception.getResponse()['error']
